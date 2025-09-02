@@ -60,7 +60,18 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Carrito actualizado');
+        // Calcular subtotal y total
+        $subtotal = isset($cart[$id]) ? $cart[$id]['price'] * $cart[$id]['quantity'] : 0;
+        $total = 0;
+        foreach ($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
+
+        return response()->json([
+            'cart' => $cart,
+            'subtotal' => $subtotal,
+            'total' => $total
+        ]);
     }
 
     /**

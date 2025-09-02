@@ -11,7 +11,7 @@
         <div class="overflow-x-auto bg-white shadow-md rounded-lg">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-gray-100 text-gray-700 uppercase text-sm">
+                    <tr class="bg-gradient-to-r from-yellow-100 via-pink-100 to-green-100 text-gray-700 uppercase text-sm">
                         <th class="p-4">Producto</th>
                         <th class="p-4">Precio</th>
                         <th class="p-4">Cantidad</th>
@@ -28,7 +28,7 @@
                                 $total += $subtotal;
                                 $hayProductos = true;
                             @endphp
-                            <tr class="border-b">
+                            <tr class="border-b cart-row">
                                 <td class="p-4 font-medium text-gray-900">{{ $item['name'] }}</td>
                                 <td class="p-4">${{ number_format($item['price'], 2) }}</td>
                                 <td class="p-4">
@@ -45,12 +45,11 @@
                                     <form action="{{ route('cart.remove', ['id' => $id]) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="bg-red-100 text-red-700 px-4 py-2 rounded-full shadow hover:bg-red-200 transition-all duration-200 flex items-center gap-2 font-semibold">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <button type="submit" class="cart-action-btn cart-remove-btn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                             Eliminar producto
-                                        </button>
                                         </button>
                                     </form>
                                 </td>
@@ -138,6 +137,27 @@
         box-shadow: 0 6px 20px rgba(67,233,123,0.18);
         transform: scale(1.04);
     }
+    .cart-remove-btn {
+        background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%);
+        color: #fff;
+        border: 2px solid #ff4e50;
+        padding: 10px 24px;
+        font-size: 1em;
+    }
+    .cart-remove-btn svg {
+        color: #fff;
+    }
+    .cart-remove-btn:hover {
+        background: #ff4e50;
+        color: #fff;
+        box-shadow: 0 6px 20px rgba(255,78,80,0.18);
+        transform: scale(1.04);
+    }
+    .cart-row {
+        background: linear-gradient(90deg, #fffbe6 0%, #ffe6f7 50%, #e6fff7 100%);
+        border-radius: 18px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
 </style>
 {{-- Script para actualizar cantidades en vivo --}}
 <script>
@@ -158,12 +178,15 @@ document.querySelectorAll('.update-cart').forEach(input => {
         .then(res => res.json())
         .then(data => {
             // Actualizar subtotal del producto
-            document.querySelector(`#subtotal-${id}`).innerText =
-                (data.cart[id].price * data.cart[id].quantity).toFixed(2);
-
+            if(data.cart && data.cart[id]) {
+                document.querySelector(`#subtotal-${id}`).innerText =
+                    (data.cart[id].price * data.cart[id].quantity).toFixed(2);
+            }
             // Actualizar total general
-            document.querySelector('#cart-total').innerText =
-                data.total.toFixed(2);
+            if(data.total !== undefined) {
+                document.querySelector('#cart-total').innerText =
+                    data.total.toFixed(2);
+            }
         })
         .catch(err => console.error(err));
     });
