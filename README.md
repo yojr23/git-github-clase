@@ -6,4 +6,4 @@
 
 ### ¿Por que deberia pasar Backend?
 
-Deberia pasar 
+Deberia pasar Backend porque es una materia que me interesa mucho y a la cual le quiero poner mucho empeño, debido a que me gusta POO y resolver problemas logicos
