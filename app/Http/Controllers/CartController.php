@@ -27,6 +27,11 @@ class CartController extends Controller
         $price = $request->price;
         $quantity = $request->quantity ?? 1;
 
+        // Validar que el id no sea nulo o vacío
+        if (empty($id)) {
+            return redirect()->route('cart.index')->with('error', 'No se pudo agregar el producto: ID inválido');
+        }
+
         // Si ya existe el producto, sumamos cantidad
         if (isset($cart[$id])) {
             $cart[$id]['quantity'] += $quantity;

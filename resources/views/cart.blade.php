@@ -1,11 +1,13 @@
 {{-- resources/views/cart.blade.php --}}
 @extends('layouts.app')
 
+@section('title', 'Carrito de Compras')
+
 @section('content')
 <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">🛒 Tu Carrito</h1>
+    <h1 class="text-3xl font-bold mb-8 text-orange-600">🛒 Tu Carrito</h1>
 
-    @if(session('cart') && count(session('cart')) > 0)
+    @if(isset($cart) && count($cart) > 0)
         <div class="overflow-x-auto bg-white shadow-md rounded-lg">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -18,52 +20,125 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php $total = 0; @endphp
-                    @foreach(session('cart') as $id => $item)
-                        @php $subtotal = $item['price'] * $item['quantity']; @endphp
-                        @php $total += $subtotal; @endphp
-                        <tr class="border-b">
-                            <td class="p-4 font-medium text-gray-900">{{ $item['name'] }}</td>
-                            <td class="p-4">${{ number_format($item['price'], 2) }}</td>
-                            <td class="p-4">
-                                <input type="number" 
-                                       value="{{ $item['quantity'] }}" 
-                                       min="1"
-                                       data-id="{{ $id }}"
-                                       class="update-cart w-16 border rounded p-1 text-center">
-                            </td>
-                            <td class="p-4 font-semibold text-gray-800">
-                                $<span id="subtotal-{{ $id }}">{{ number_format($subtotal, 2) }}</span>
-                            </td>
-                            <td class="p-4">
-                                <form action="{{ route('cart.remove', $id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 font-bold">
-                                        Eliminar
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
+                    @php $total = 0; $hayProductos = false; @endphp
+                    @foreach($cart as $id => $item)
+                        @if(!empty($id) && !empty($item['name']) && $item['price'] > 0)
+                            @php
+                                $subtotal = $item['price'] * $item['quantity'];
+                                $total += $subtotal;
+                                $hayProductos = true;
+                            @endphp
+                            <tr class="border-b">
+                                <td class="p-4 font-medium text-gray-900">{{ $item['name'] }}</td>
+                                <td class="p-4">${{ number_format($item['price'], 2) }}</td>
+                                <td class="p-4">
+                                    <input type="number"
+                                           value="{{ $item['quantity'] }}"
+                                           min="1"
+                                           data-id="{{ $id }}"
+                                           class="update-cart w-16 border rounded p-1 text-center">
+                                </td>
+                                <td class="p-4 font-semibold text-gray-800">
+                                    $<span id="subtotal-{{ $id }}">{{ number_format($subtotal, 2) }}</span>
+                                </td>
+                                <td class="p-4">
+                                    <form action="{{ route('cart.remove', ['id' => $id]) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-100 text-red-700 px-4 py-2 rounded-full shadow hover:bg-red-200 transition-all duration-200 flex items-center gap-2 font-semibold">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            Eliminar producto
+                                        </button>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endif
                     @endforeach
+                    @if(!$hayProductos)
+                        <tr>
+                            <td colspan="5" class="text-center text-gray-500 py-8">Tu carrito está vacío.</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
 
-        <div class="flex justify-between items-center mt-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mt-6 gap-4">
             <h3 class="text-xl font-bold">
                 Total: $<span id="cart-total">{{ number_format($total, 2) }}</span>
             </h3>
-            <a href="{{ route('checkout') }}" 
-               class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                Proceder al Pago
-            </a>
+            <div class="flex gap-4">
+                <form action="{{ route('cart.clear') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="cart-action-btn cart-clear-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Vaciar Carrito
+                    </button>
+                </form>
+                <a href="{{ route('checkout') }}" class="cart-action-btn cart-pay-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Proceder al Pago
+                </a>
+            </div>
         </div>
     @else
-        <p class="text-gray-500">Tu carrito está vacío.</p>
+        <p class="text-gray-500 mt-6">Tu carrito está vacío.</p>
     @endif
 </div>
 
+<style>
+    .cart-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold;
+        font-size: 1.1em;
+        padding: 14px 32px;
+        border-radius: 32px;
+        border: none;
+        outline: none;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+        transition: all 0.2s;
+        cursor: pointer;
+        margin: 0 4px;
+    }
+    .cart-clear-btn {
+        background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%);
+        color: #fff;
+        border: 2px solid #ff4e50;
+    }
+    .cart-clear-btn svg {
+        color: #fff;
+    }
+    .cart-clear-btn:hover {
+        background: #ff4e50;
+        color: #fff;
+        box-shadow: 0 6px 20px rgba(255,78,80,0.18);
+        transform: scale(1.04);
+    }
+    .cart-pay-btn {
+        background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+        color: #fff;
+        border: 2px solid #43e97b;
+    }
+    .cart-pay-btn svg {
+        color: #fff;
+    }
+    .cart-pay-btn:hover {
+        background: #43e97b;
+        color: #fff;
+        box-shadow: 0 6px 20px rgba(67,233,123,0.18);
+        transform: scale(1.04);
+    }
+</style>
 {{-- Script para actualizar cantidades en vivo --}}
 <script>
 document.querySelectorAll('.update-cart').forEach(input => {
@@ -89,7 +164,8 @@ document.querySelectorAll('.update-cart').forEach(input => {
             // Actualizar total general
             document.querySelector('#cart-total').innerText =
                 data.total.toFixed(2);
-        });
+        })
+        .catch(err => console.error(err));
     });
 });
 </script>

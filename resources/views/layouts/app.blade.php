@@ -14,7 +14,7 @@
     
     <nav class="hidden md:flex space-x-8 font-semibold">
         <a href="{{ url('/') }}" class="hover:text-orange-500">Inicio</a>
-        <a href="#productos" class="hover:text-orange-500">Productos</a>
+        <a href="{{ route('productos.general') }}" class="hover:text-orange-500">Productos</a>
         <a href="#servicios" class="hover:text-orange-500">Servicios</a>
         <a href="#testimonios" class="hover:text-orange-500">Testimonios</a>
         <a href="#contacto" class="hover:text-orange-500">Contacto</a>
