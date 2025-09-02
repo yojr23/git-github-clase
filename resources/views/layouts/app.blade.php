@@ -10,16 +10,28 @@
 
     {{-- Header global --}}
     <header class="flex justify-between items-center px-8 py-6 bg-white shadow-md fixed top-0 w-full z-50">
-        <div class="text-2xl font-bold text-orange-600">🚀 MiLogo</div>
-        <nav class="hidden md:flex space-x-8 font-semibold">
-            <a href="#hero" class="hover:text-orange-500">Inicio</a>
-            <a href="#productos" class="hover:text-orange-500">Productos</a>
-            <a href="#servicios" class="hover:text-orange-500">Servicios</a>
-            <a href="#testimonios" class="hover:text-orange-500">Testimonios</a>
-            <a href="#contacto" class="hover:text-orange-500">Contacto</a>
-        </nav>
-        <button class="md:hidden text-gray-600">☰</button>
-    </header>
+    <div class="text-2xl font-bold text-orange-600">🚀 MiLogo</div>
+    
+    <nav class="hidden md:flex space-x-8 font-semibold">
+        <a href="{{ url('/') }}" class="hover:text-orange-500">Inicio</a>
+        <a href="#productos" class="hover:text-orange-500">Productos</a>
+        <a href="#servicios" class="hover:text-orange-500">Servicios</a>
+        <a href="#testimonios" class="hover:text-orange-500">Testimonios</a>
+        <a href="#contacto" class="hover:text-orange-500">Contacto</a>
+        {{-- Enlace al carrito --}}
+        <a href="{{ route('cart.index') }}" class="relative hover:text-orange-500">
+            🛒 Carrito
+            @if(session('cart') && count(session('cart')) > 0)
+                <span class="absolute -top-3 -right-4 bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {{ count(session('cart')) }}
+                </span>
+            @endif
+        </a>
+    </nav>
+    
+    <button class="md:hidden text-gray-600">☰</button>
+</header>
+
 
     {{-- Contenido dinámico --}}
     <main class="pt-24">
