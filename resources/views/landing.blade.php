@@ -21,12 +21,15 @@
         <h2 class="text-3xl font-bold text-center mb-12">Nuestros Productos</h2>
         <div class="grid md:grid-cols-3 gap-10">
             <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:scale-105 transition">
-                <svg class="mx-auto w-16 h-16 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                </svg>
-                <h3 class="mt-6 text-xl font-semibold">Producto A</h3>
-                <p class="mt-3 text-gray-600">Solución innovadora para transformar tu negocio.</p>
+                <a href="{{ route('producto.a') }}" class="block">
+                    <svg class="mx-auto w-16 h-16 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                    <h3 class="mt-6 text-xl font-semibold">Producto A</h3>
+                    <p class="mt-3 text-gray-600">Solución innovadora para transformar tu negocio.</p>
+                </a>
             </div>
+
             <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:scale-105 transition">
                 <svg class="mx-auto w-16 h-16 text-teal-500" fill="currentColor" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10"></circle>
